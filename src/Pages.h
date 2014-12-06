@@ -488,6 +488,7 @@ class FieldsPage : public QWidget
         void deleteClicked();
 
     private:
+
         QTreeWidget *fields;
 
 #ifndef Q_OS_MAC

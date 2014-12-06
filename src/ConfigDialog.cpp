@@ -235,7 +235,6 @@ void ConfigDialog::saveClicked()
     } 
 
     // we're done.
-    context->notifyAthleteConfigChanged();  // Do this first because other handlers may depend on the athlete config (e.g. units)
     context->notifyConfigChanged();
     close();
 }

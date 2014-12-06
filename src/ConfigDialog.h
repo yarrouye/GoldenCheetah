@@ -65,9 +65,6 @@ class AthleteConfig : public QWidget
     public slots:
         void saveClicked();
     
-    signals:
-        void athleteConfigChanged();
-
     private:
         QDir home;
         Zones *zones;

@@ -221,7 +221,7 @@ Athlete::Athlete(Context *context, const QDir &homeDir)
     }
 
     // trap signals
-    connect(context, SIGNAL(athleteConfigChanged()), this, SLOT(athleteConfigChanged()));
+    connect(context, SIGNAL(configChanged()), this, SLOT(configChanged()));
     connect(treeWidget, SIGNAL(itemSelectionChanged()), this, SLOT(rideTreeWidgetSelectionChanged()));
     connect(context,SIGNAL(rideAdded(RideItem*)),this,SLOT(checkCPX(RideItem*)));
     connect(context,SIGNAL(rideDeleted(RideItem*)),this,SLOT(checkCPX(RideItem*)));
@@ -512,7 +512,7 @@ Athlete::translateDefaultCharts(QList<LTMSettings>&charts)
 }
 
 void
-Athlete::athleteConfigChanged()
+Athlete::configChanged()
 {
     // re-read Zones in case it changed
     QFile zonesFile(home->config().canonicalPath() + "/power.zones");
