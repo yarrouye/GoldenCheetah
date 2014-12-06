@@ -975,15 +975,12 @@ RiderPage::saveClicked()
     appsettings->setCValue(context->athlete->cyclist, GC_HEIGHT, height->value() * (unitCombo->currentIndex() ? CM_PER_INCH/100.0 : 1.0/100.0));
     appsettings->setCValue(context->athlete->cyclist, GC_WBALTAU, wbaltau->value());
 
-    if (unitCombo->currentIndex()==0)
-        appsettings->setCValue(context->athlete->cyclist, GC_UNIT, GC_UNIT_METRIC);
-    else if (unitCombo->currentIndex()==1)
-        appsettings->setCValue(context->athlete->cyclist, GC_UNIT, GC_UNIT_IMPERIAL);
-
     appsettings->setCValue(context->athlete->cyclist, GC_SEX, sex->currentIndex());
     appsettings->setCValue(context->athlete->cyclist, GC_BIO, bio->toPlainText());
     avatar.save(context->athlete->home->config().canonicalPath() + "/" + "avatar.png", "PNG");
 
+    QVariant newUnits = unitCombo->currentIndex() == 0 ? GC_UNIT_METRIC : GC_UNIT_IMPERIAL;
+    appsettings->setCValue(context->athlete->cyclist, GC_UNIT, newUnits);
 }
 
 //
@@ -2362,7 +2359,7 @@ KeywordsPage::pageSelected()
     // load in texts from metadata
     fieldChooser->clear();
 
-    // get the current fields defiitions 
+    // get the current fields definitions 
     QList<FieldDefinition> fromFieldsPage;
     parent->fieldsPage->getDefinitions(fromFieldsPage);
     foreach(FieldDefinition x, fromFieldsPage) {

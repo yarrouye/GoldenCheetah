@@ -81,9 +81,10 @@ class Context : public QObject
         // *********************************************
         // APPLICATION EVENTS
         // *********************************************
-        void notifyConfigChanged(); // used by ConfigDialog to notify Context *
-                                    // when config has changed - and to get a
-                                    // signal emitted to notify its children
+        // used by ConfigDialog to notify Context when config has changed - and to get a
+        // signal emitted to notify its children
+        void notifyAthleteConfigChanged();
+        void notifyConfigChanged();
 
         // preset charts
         void notifyPresetsChanged() { emit presetsChanged(); }
@@ -122,6 +123,11 @@ class Context : public QObject
         void notifyIntervalHover(RideFileInterval x) { emit intervalHover(x); }
         void notifyRideClean() { rideClean(ride); }
         void notifyRideDirty() { rideDirty(ride); }
+        void notifyMetadataFlush() { metadataFlush(); }
+
+        void notifyRefreshStart() { emit refreshStart(); }
+        void notifyRefreshEnd() { emit refreshEnd(); }
+        void notifyRefreshUpdate() { emit refreshUpdate(); }
 
         void notifyCompareIntervals(bool state);
         void notifyCompareIntervalsChanged();
@@ -135,9 +141,16 @@ class Context : public QObject
         void filterChanged();
         void homeFilterChanged();
 
+        void athleteConfigChanged();
         void configChanged();
         void presetsChanged();
         void presetSelected(int);
+
+
+        // refreshing stats
+        void refreshStart();
+        void refreshEnd();
+        void refreshUpdate();
 
         void rideSelected(RideItem*);
         void rideAdded(RideItem *);
@@ -147,6 +160,7 @@ class Context : public QObject
         void intervalHover(RideFileInterval);
         void intervalZoom(IntervalItem*);
         void zoomOut();
+        void metadataFlush();
         void rideDirty(RideItem*);
         void rideClean(RideItem*);
 

@@ -568,6 +568,9 @@ FormField::FormField(FieldDefinition field, RideMetadata *meta) : definition(fie
     widget->setPalette(meta->palette);
     //widget->setFont(font);
     //connect(main, SIGNAL(rideSelected()), this, SLOT(rideSelected()));
+
+    // if save is being called flush all the values out ready to save as they are
+    connect(meta->context, SIGNAL(metadataFlush()), this, SLOT(editFinished()));
 }
 
 FormField::~FormField()
@@ -721,11 +724,10 @@ FormField::editFinished()
             QString value = ourRideItem->ride()->getTag(field.name, "");
             if (field.name == "Weight") {
                 bool useMetric = meta->context->athlete->useMetricUnits;
-                if (useMetric == false) {
-                    // This code appears in RideFile.cpp and RideMetaData.cpp and needs to be kept in sync for now.
-                    double lbs = (double) qRound(100 * (value.toDouble() * LB_PER_KG + 0.001)) / 100;
-                    value = QString("%1").arg(lbs);
-                }
+                double conv = useMetric ? 1. : LB_PER_KG;
+                // This code appears in RideFile.cpp and RideMetaData.cpp and needs to be kept in sync for now.
+                double lbs = (double) qRound(100 * (value.toDouble() * conv + 0.001)) / 100;
+                value = QString("%1").arg(lbs);
                 // Add units - for now, without a space but should be localized?
                 const RideMetric *aw = RideMetricFactory::instance().rideMetric("athlete_weight");
                 QString units = aw->units(useMetric);
@@ -1006,7 +1008,7 @@ static QString unprotect(QString buffer)
     // html special chars are automatically handled
     // other special characters will not work
     // cross-platform but will work locally, so not a biggie
-    // i.e. if thedefault charts.xml has a special character
+    // i.e. if the default charts.xml has a special character
     // in it it should be added here
     return s;
 }

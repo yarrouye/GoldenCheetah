@@ -487,11 +487,10 @@ RideFile *RideFileFactory::openRideFile(Context *context, QFile &file,
                 QString value = result->getTag(field.name, "");
                 if (field.name == "Weight") {
                     bool useMetric = context->athlete->useMetricUnits;
-                    if (useMetric == false) {
-                        // This code appears in RideFile.cpp and RideMetaData.cpp and needs to be kept in sync for now.
-                        double lbs = (double) qRound(100 * (value.toDouble() * LB_PER_KG + 0.001)) / 100;
-                        value = QString("%1").arg(lbs);
-                    }
+                    double conv = useMetric ? 1. : LB_PER_KG;
+                    // This code appears in RideFile.cpp and RideMetaData.cpp and needs to be kept in sync for now.
+                    double lbs = (double) qRound(100 * (value.toDouble() * conv + 0.001)) / 100;
+                    value = QString("%1").arg(lbs);
                     // Add units (the format should be localized)
                     const RideMetric *aw = RideMetricFactory::instance().rideMetric("athlete_weight");
                     QString units = aw->units(useMetric);
@@ -1330,7 +1329,7 @@ RideFile::getHeight()
         return height;
     }
 
-    // is withings upported for height?
+    // is withings supported for height?
 
     // global options
     height = appsettings->cvalue(context->athlete->cyclist, GC_HEIGHT, height_default).toString().toDouble();
@@ -1389,12 +1388,12 @@ RideFile::parseRideFileName(const QString &name, QDateTime *dt)
 //
 
 void
-RideFile::recalculateDerivedSeries()
+RideFile::recalculateDerivedSeries(bool force)
 {
     // derived data is calculated from the data that is present
     // we should set to 0 where we cannot derive since we may
     // be called after data is deleted or added
-    if (dstale == false) return; // we're already up to date
+    if (!force && dstale == false) return; // we're already up to date
 
     //
     // NP Initialisation -- working variables
@@ -1792,7 +1791,7 @@ RideFile::resample(double newRecIntSecs, int interpolate)
                         }
                     }
 
-                    // lets not go backwards -- or two sampls at the same time
+                    // lets not go backwards -- or two samples at the same time
                     if ((lp && p->secs > lp->secs) || !lp) {
                         points << QPointF(p->secs - offset, p->value(series));
                         last = p->secs-offset;
