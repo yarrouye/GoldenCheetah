@@ -58,6 +58,13 @@ Context::notifyCompareDateRangesChanged()
 }
 
 void
+Context::notifyAthleteConfigChanged()
+{
+    // Notify people connected to us about the changes in athlete config.
+    athleteConfigChanged();
+}
+
+void
 Context::notifyConfigChanged()
 {
     configChanged();
