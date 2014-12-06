@@ -150,7 +150,7 @@ void MetricAggregator::refreshMetrics(QDateTime forceAfterThisDate)
     unsigned long rideFingerprint = static_cast<unsigned long>(context->athlete->zones()->getFingerprint(context))
                                     + static_cast<unsigned long>(context->athlete->paceZones()->getFingerprint())
                                     + static_cast<unsigned long>(context->athlete->hrZones()->getFingerprint()); // checksum of *all* zone data (HR and Power)
-    rindeFingerPrint += context->athlete->useMetricUnits ? 0 : 1;   // Changing units may change rendering of the calendar texts
+    rideFingerprint += context->athlete->useMetricUnits ? 0 : 1;   // Changing units may change rendering of the calendar texts
 
     // update statistics for ride files which are out of date
     // showing a progress bar as we go
