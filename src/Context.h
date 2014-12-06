@@ -81,9 +81,10 @@ class Context : public QObject
         // *********************************************
         // APPLICATION EVENTS
         // *********************************************
-        void notifyConfigChanged(); // used by ConfigDialog to notify Context *
-                                    // when config has changed - and to get a
-                                    // signal emitted to notify its children
+        // used by ConfigDialog to notify Context when config has changed - and to get a
+        // signal emitted to notify its children
+        void notifyAthleteConfigChanged();
+        void notifyConfigChanged();
 
         // preset charts
         void notifyPresetsChanged() { emit presetsChanged(); }
@@ -135,6 +136,7 @@ class Context : public QObject
         void filterChanged();
         void homeFilterChanged();
 
+        void athleteConfigChanged();
         void configChanged();
         void presetsChanged();
         void presetSelected(int);

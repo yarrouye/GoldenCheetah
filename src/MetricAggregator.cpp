@@ -143,9 +143,10 @@ void MetricAggregator::refreshMetrics(QDateTime forceAfterThisDate)
     }
 
 
-    unsigned long zoneFingerPrint = static_cast<unsigned long>(context->athlete->zones()->getFingerprint(context))
-                                  + static_cast<unsigned long>(context->athlete->paceZones()->getFingerprint())
-                                  + static_cast<unsigned long>(context->athlete->hrZones()->getFingerprint()); // checksum of *all* zone data (HR and Power)
+    unsigned long rideFingerprint = static_cast<unsigned long>(context->athlete->zones()->getFingerprint(context))
+                                    + static_cast<unsigned long>(context->athlete->paceZones()->getFingerprint())
+                                    + static_cast<unsigned long>(context->athlete->hrZones()->getFingerprint()); // checksum of *all* zone data (HR and Power)
+    rindeFingerPrint += context->athlete->useMetricUnits ? 0 : 1;   // Changing units may change rendering of the calendar texts
 
     // update statistics for ride files which are out of date
     // showing a progress bar as we go
@@ -204,7 +205,7 @@ void MetricAggregator::refreshMetrics(QDateTime forceAfterThisDate)
         QApplication::processEvents();
 
         if (dbTimeStamp < QFileInfo(file).lastModified().toTime_t() ||
-            zoneFingerPrint != fingerprint ||
+            rideFingerprint != fingerprint ||
             (!forceAfterThisDate.isNull() && name >= forceAfterThisDate.toString("yyyy_MM_dd_hh_mm_ss"))) {
             QStringList errors;
 
@@ -215,7 +216,7 @@ void MetricAggregator::refreshMetrics(QDateTime forceAfterThisDate)
             // but still update if we're doing this because settings changed not the ride!
             QString fullPath =  QString(context->athlete->home->activities().absolutePath()) + "/" + name;
             if ((crc == 0 || crc != DBAccess::computeFileCRC(fullPath)) ||
-                zoneFingerPrint != fingerprint ||
+                rideFingerprint != fingerprint ||
                 (!forceAfterThisDate.isNull() && name >= forceAfterThisDate.toString("yyyy_MM_dd_hh_mm_ss"))) {
 
                 updateForRide = true;
@@ -232,7 +233,7 @@ void MetricAggregator::refreshMetrics(QDateTime forceAfterThisDate)
                     out << "Getting weight: " << name << "\r\n";
                     ride->getWeight();
                     out << "Updating statistics: " << name << "\r\n";
-                    importRide(context->athlete->home->activities(), ride, name, zoneFingerPrint, (dbTimeStamp > 0));
+                    importRide(context->athlete->home->activities(), ride, name, rideFingerprint, (dbTimeStamp > 0));
 
                 }
                 updates++;
@@ -275,7 +276,7 @@ void MetricAggregator::refreshMetrics(QDateTime forceAfterThisDate)
                         //unsigned long intCrc = intCurrent.crc;
                         unsigned long intFingerprint = intCurrent.fingerprint;
 
-                        if (intDbTimeStamp < QFileInfo(file).lastModified().toTime_t() || zoneFingerPrint != intFingerprint) {
+                        if (intDbTimeStamp < QFileInfo(file).lastModified().toTime_t() || rideFingerprint != intFingerprint) {
                             updateForInterval= true;
                         }
 
@@ -291,7 +292,7 @@ void MetricAggregator::refreshMetrics(QDateTime forceAfterThisDate)
                             //qDebug() << "Insert new Route interval";
 
                             IntervalItem* interval = new IntervalItem(ride, route->getName(), _ride.start, _ride.stop, 0, 0, j);
-                            importInterval(interval, "Route", route->getName(), zoneFingerPrint, (intDbTimeStamp > 0));
+                            importInterval(interval, "Route", route->getName(), rideFingerprint, (intDbTimeStamp > 0));
                         }
                     }
                 }

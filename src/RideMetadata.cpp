@@ -721,11 +721,10 @@ FormField::editFinished()
             QString value = ourRideItem->ride()->getTag(field.name, "");
             if (field.name == "Weight") {
                 bool useMetric = meta->context->athlete->useMetricUnits;
-                if (useMetric == false) {
-                    // This code appears in RideFile.cpp and RideMetaData.cpp and needs to be kept in sync for now.
-                    double lbs = (double) qRound(100 * (value.toDouble() * LB_PER_KG + 0.001)) / 100;
-                    value = QString("%1").arg(lbs);
-                }
+                double conv = useMetric ? 1. : LB_PER_KG;
+                // This code appears in RideFile.cpp and RideMetaData.cpp and needs to be kept in sync for now.
+                double lbs = (double) qRound(100 * (value.toDouble() * conv + 0.001)) / 100;
+                value = QString("%1").arg(lbs);
                 // Add units - for now, without a space but should be localized?
                 const RideMetric *aw = RideMetricFactory::instance().rideMetric("athlete_weight");
                 QString units = aw->units(useMetric);

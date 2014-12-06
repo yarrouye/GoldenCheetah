@@ -151,7 +151,7 @@ class Athlete : public QObject
         void intervalTreeWidgetSelectionChanged();
         void checkCPX(RideItem*ride);
         void updateRideFileIntervals();
-        void configChanged();
+        void athleteConfigChanged();
 
 
 };
